@@ -86,7 +86,7 @@ class GUI:
     if (os.path.isfile('schemer.ui')):
       self.builder.add_from_file('schemer.ui')
     else:
-      print ('unable to find UI file')
+      print('unable to find UI file')
       sys.exit(1)
     
     self.builder.connect_signals(self)
@@ -344,10 +344,9 @@ class GUI:
     fp = open(location, 'w')
     fp.write(output)
     fp.close()
-    print ('wrote to ' + location)
     
     
-  def on_save_clicked(self):
+  def on_save_clicked(self, param):
     if not self.currentSchemeFile:
       
       filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
@@ -364,7 +363,7 @@ class GUI:
       
       # TODO, handle if a permissions issue
   
-  def on_save_as_clicked(self):
+  def on_save_as_clicked(self, param):
 
     filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
     
@@ -376,7 +375,7 @@ class GUI:
       self.currentSchemeFile = filename
 
   # launch a file browser dialog for opening a file
-  def on_open_clicked(self):
+  def on_open_clicked(self, param):
 
     filechooser = Gtk.FileChooserDialog('Open', self.window,
       Gtk.FileChooserAction.OPEN,
@@ -418,17 +417,15 @@ class GUI:
 
     if not path:
       return
-      
-    print ('opening ' + path)
     
     self.load_scheme(path)
 
   
-  def on_about_menu_clicked(self):
+  def on_about_menu_clicked(self, param):
     self.aboutDialog.run()
     self.aboutDialog.hide()
     
-  def on_reset_clicked(self):
+  def on_reset_clicked(self, param):
     
     if self.selectedStyleId in self.dictAllStyles:
     
