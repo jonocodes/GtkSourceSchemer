@@ -96,7 +96,7 @@ class GUI:
     self.aboutDialog = self.builder.get_object('aboutdialog')
     
     self.sourceBuffer = GtkSource.Buffer(max_undo_levels=0)
-    self.sourceView = self.builder.get_object('gtksourceviewExample')
+    self.sourceView = self.builder.get_object('gtksourceviewSample')
     self.sourceView.set_buffer(self.sourceBuffer)
     
     self.liststoreStyles = self.builder.get_object('liststoreStyles')
@@ -118,7 +118,7 @@ class GUI:
     self.entryAuthor = self.builder.get_object('entryAuthor')
     self.entryDescription = self.builder.get_object('entryDescription')
     self.entryId = self.builder.get_object('entryId')
-    self.labelExample = self.builder.get_object('labelExample')
+    self.labelSample = self.builder.get_object('labelSample')
     
     self.colorbuttonBackground.connect('color-set', self.on_style_changed)
     self.colorbuttonForeground.connect('color-set', self.on_style_changed)
@@ -301,7 +301,7 @@ class GUI:
     
     self.resetButton.set_sensitive(False)
     
-  def update_example_view(self):
+  def update_sample_view(self):
     """
     Update the sample shown in the GUI.
     To do this we must write the scheme to disk and reload it from there.
@@ -434,7 +434,7 @@ class GUI:
       # reset the GUI
       self.clear_and_disable_style_buttons()
       
-      self.update_example_view()
+      self.update_sample_view()
       
   def on_background_toggled(self, param):
     
@@ -444,7 +444,7 @@ class GUI:
     else:
       self.colorbuttonBackground.set_sensitive(False)
       self.dictAllStyles[self.selectedStyleId].background = None;
-      self.update_example_view()
+      self.update_sample_view()
       
       # TODO decide what to do with orphaned styles (ones with no properties set)
       
@@ -456,7 +456,7 @@ class GUI:
     else:
       self.colorbuttonForeground.set_sensitive(False)
       self.dictAllStyles[self.selectedStyleId].foreground = None;
-      self.update_example_view()
+      self.update_sample_view()
   
   def on_style_changed(self, data):
         
@@ -487,7 +487,7 @@ class GUI:
     elif data == self.togglebuttonStrikethrough:
       self.dictAllStyles[self.selectedStyleId].strikethrough = data.get_active()
     
-    self.update_example_view()
+    self.update_sample_view()
     
   def on_style_selected(self, selection):
     model, treeiter = selection.get_selected()
@@ -591,11 +591,11 @@ class GUI:
       if self.currentLanguageId in samples:
         self.sourceBuffer.set_language(thisLanguage);
         self.sourceBuffer.set_text(samples[self.currentLanguageId])
-        self.labelExample.set_text(self.currentLanguageName + ' sample')
+        self.labelSample.set_text(self.currentLanguageName + ' sample')
       else:
         self.sourceBuffer.set_language(self.defaultLanguage);
         self.sourceBuffer.set_text(samples[self.defaultLanguageId])
-        self.labelExample.set_text(self.defaultLanguageName + ' sample')
+        self.labelSample.set_text(self.defaultLanguageName + ' sample')
 
 
 def messagedialog(dialog_type, short, long=None, parent=None,

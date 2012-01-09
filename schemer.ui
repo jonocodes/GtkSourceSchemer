@@ -297,7 +297,7 @@ GPLv3</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="boxStyleAndExample">
+                  <object class="GtkBox" id="boxStyleAndSample">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="orientation">vertical</property>
@@ -701,16 +701,16 @@ GPLv3</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="boxExample">
+                      <object class="GtkBox" id="boxSample">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="labelExample">
+                          <object class="GtkLabel" id="labelSample">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">Example</property>
+                            <property name="label" translatable="yes">Sample</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -719,12 +719,12 @@ GPLv3</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow" id="scrolledwindowExample">
+                          <object class="GtkScrolledWindow" id="scrolledwindowSample">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="shadow_type">in</property>
                             <child>
-                              <object class="GtkSourceView" id="gtksourceviewExample">
+                              <object class="GtkSourceView" id="gtksourceviewSample">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="has_tooltip">True</property>

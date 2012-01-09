@@ -2,6 +2,8 @@
 
 # please keep these in alphabetical order so it is easy to follow
 # see available languages: /usr/share/gtksourceview-3.0/language-specs
+# or run in python >>> GtkSource.LanguageManager().get_language_ids()
+
 
 samples = {}
 
@@ -49,6 +51,8 @@ End If
 </html>
 """
 
+# samples['automake'] = """
+
 samples['awk'] = """
 BEGIN {
   for(i=1; i <= 100; i++) {
@@ -66,7 +70,11 @@ BEGIN {
 }
 """
 
-# do not remove this language
+# samples['bennugd'] = """
+# samples['bibtex'] = """
+# samples['boo'] = """
+
+# do not remove this language since it is the fallback entry
 samples['c'] = """
 /* Some comments */
 #include <stdio.h>
@@ -103,6 +111,18 @@ string[] stringArr = new string[5];
 stringArr[0] = "string";
 """
 
+# samples['cg'] = """
+# samples['changelog'] = """
+# samples['chdr'] = """
+# samples['cmake'] = """
+# samples['cobol'] = """
+# samples['cpp'] = """
+# samples['css'] = """
+# samples['cuda'] = """
+# samples['d'] = """
+# samples['def'] = """
+# samples['desktop'] = """
+
 samples['diff'] = """
 --- xinetd.d/tftp       2003-12-17 13:11:20.000000000 -0500
 +++ ./tftp      2004-01-22 11:46:14.479497688 -0500
@@ -116,9 +136,123 @@ samples['diff'] = """
         per_source              = 11
         cps                     = 100 2
 """
+# samples['docbook'] = """
+# samples['dosbatch'] = """
+# samples['dot'] = """
+# samples['dpatch'] = """
+# samples['dtd'] = """
+# samples['eiffel'] = """
+# samples['erlang'] = """
+# samples['fcl'] = """
+# samples['forth'] = """
+# samples['fortran'] = """
+# samples['fsharp'] = """
+# samples['gap'] = """
+# samples['gdb-log'] = """
+# samples['gettext-translation'] = """
+# samples['glsl'] = """
+# samples['go'] = """
+# samples['gtk-doc'] = """
+# samples['gtkrc'] = """
+# samples['haddock'] = """
+# samples['haskell'] = """
+# samples['haskell-literate'] = """
+
+samples['html'] = """
+<html>
+<body>
+
+<table border="1">
+  <caption>Monthly savings</caption>
+  <tr>
+    <th>Month</th>
+    <th>Savings</th>
+  </tr>
+  <tr>
+    <td>January</td>
+    <td>$100</td>
+  </tr>
+  <tr>
+    <td>February</td>
+    <td>$50</td>
+  </tr>
+</table>
+
+</body>
+</html>
+"""
+
+# samples['idl'] = """
+# samples['imagej'] = """
+# samples['ini'] = """
+# samples['java'] = """
+# samples['js'] = """
+# samples['json'] = """
+# samples['latex'] = """
+# samples['libtool'] = """
+# samples['lua'] = """
+# samples['m4'] = """
+# samples['makefile'] = """
+# samples['mallard'] = """
+# samples['markdown'] = """
+# samples['matlab'] = """
+# samples['nemerle'] = """
+# samples['nsis'] = """
+# samples['objc'] = """
+# samples['objective-caml'] = """
+# samples['objj'] = """
+# samples['ocl'] = """
+# samples['octave'] = """
+# samples['ooc'] = """
+# samples['opal'] = """
+# samples['opencl'] = """
+# samples['pascal'] = """
+# samples['perl'] = """
 
 samples['php'] = """
 /* ygtyuy */
 print 'hello world';
 """
+# samples['pkgconfig'] = """
+# samples['prolog'] = """
+# samples['proto'] = """
 
+samples['python'] = """
+  def on_save_clicked(self, param):
+    if not self.currentSchemeFile:
+      
+      filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
+    
+      if filename and not '.' in os.path.basename(filename):
+        filename = filename + '.xml'
+      
+      if filename:
+        self.write_scheme(filename, self.entryId.get_text())
+        self.currentSchemeFile = filename
+    
+    else:
+      self.write_scheme(self.currentSchemeFile, self.entryId.get_text())
+      
+      # TODO handle case where there is a permissions issue
+"""
+
+# samples['r'] = """
+# samples['rpmspec'] = """
+# samples['ruby'] = """
+# samples['scheme'] = """
+# samples['scilab'] = """
+# samples['sh'] = """
+# samples['sml'] = """
+# samples['sparql'] = """
+# samples['sql'] = """
+# samples['systemverilog'] = """
+# samples['t2t'] = """
+# samples['tcl'] = """
+# samples['texinfo'] = """
+# samples['vala'] = """
+# samples['vbnet'] = """
+# samples['verilog'] = """
+# samples['vhdl'] = """
+# samples['xml'] = """
+# samples['xslt'] = """
+# samples['yacc'] = """
