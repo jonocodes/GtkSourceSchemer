@@ -74,8 +74,9 @@ class GUI:
     self.colorBlack = Gdk.color_parse('#000000');
     
     # we set this explicitly since the API does not give us a method for it
-    self.guiStyleIds = ['text', 'selection', 'selection-unfocused', 'cursor',
-      'secondary-cursor', 'current-line', 'line-numbers','bracket-match', 'bracket-mismatch']
+    self.guiStyleIds = ['bracket-match', 'bracket-mismatch',
+      'current-line', 'cursor', 'line-numbers', 'secondary-cursor',
+      'selection', 'selection-unfocused', 'text']
 
     # set up GUI widgets and signals
     
@@ -174,11 +175,13 @@ class GUI:
       self.liststoreStyles.append([langStyleId])
     
     self.langMapNameToId = {}
-    self.liststoreLanguages.append(['  GUI styles'])
-    self.liststoreLanguages.append(['  Default styles'])
     
-    self.langMapNameToId['  GUI styles'] = ''
+    # TODO perhaps merge the GUI and Default styles into one
+    self.liststoreLanguages.append(['  Default styles'])
+    self.liststoreLanguages.append(['  GUI styles'])
+    
     self.langMapNameToId['  Default styles'] = 'def'
+    self.langMapNameToId['  GUI styles'] = ''
     
     for thisLanguage in languages:
       langName = self.languageManager.get_language(thisLanguage).get_name()
@@ -206,7 +209,7 @@ class GUI:
     
     self.window.show_all()
   
-  def destroy(self):
+  def destroy(self, window):
     Gtk.main_quit()
     
   def load_scheme(self, schemeIdOrFile):
@@ -223,7 +226,7 @@ class GUI:
       xmlTree = ET.parse(fp)
       fp.close()
 
-      # TODO explicitly parse the 'style-scheme' root, but dont know how
+      # TODO explicitly parse the 'style-scheme' instead of assuming root is correct
       thisScheme = self.schemeManager.get_scheme(xmlTree.getroot().attrib['id'])
       
       if thisScheme == None:
@@ -241,8 +244,7 @@ class GUI:
         
         return False
         
-      schemeFile = schemeIdOrFile
-      self.currentSchemeFile = schemeFile
+      self.currentSchemeFile = schemeIdOrFile
 
     else:
 
@@ -257,12 +259,12 @@ class GUI:
     self.entryAuthor.set_text(', '.join(thisScheme.get_authors()))
     self.entryDescription.set_text(thisScheme.get_description())
     self.entryId.set_text(thisScheme.get_id())
-  
+    
     # get all the style elements
     # since there are no API calls to do this, we parse the XML file for now
     # also works around this https://bugzilla.gnome.org/show_bug.cgi?id=667194
-    schemeFile = self.currentScheme.get_filename()  #?
-  
+    schemeFile = self.currentScheme.get_filename()
+    
     fp = open(schemeFile, 'r')
     xmlTree = ET.parse(fp)
     fp.close()
@@ -281,7 +283,7 @@ class GUI:
     # set up temp file so the sample view can be updated
     self.tempSchemeId = thisScheme.get_id() + '_temp'
     self.tempSchemeFile = tempfile.gettempdir() + '/' + self.tempSchemeId + '.xml'
-  
+    
     return True
     
   def clear_and_disable_style_buttons(self):
@@ -299,7 +301,6 @@ class GUI:
     
     self.resetButton.set_sensitive(False)
     
-    
   def update_example_view(self):
     """
     Update the sample shown in the GUI.
@@ -309,7 +310,7 @@ class GUI:
     # write it to disk
     self.write_scheme(self.tempSchemeFile, self.tempSchemeId)
     
-    # and reload it from disk  
+    # and reload it from disk
     self.schemeManager.force_rescan()
     
     newScheme = self.schemeManager.get_scheme(self.tempSchemeId)
@@ -361,7 +362,7 @@ class GUI:
     else:
       self.write_scheme(self.currentSchemeFile, self.entryId.get_text())
       
-      # TODO, handle if a permissions issue
+      # TODO handle case where there is a permissions issue
   
   def on_save_as_clicked(self, param):
 
@@ -419,7 +420,6 @@ class GUI:
       return
     
     self.load_scheme(path)
-
   
   def on_about_menu_clicked(self, param):
     self.aboutDialog.run()
@@ -436,7 +436,6 @@ class GUI:
       
       self.update_example_view()
       
-  
   def on_background_toggled(self, param):
     
     if param.get_active():
@@ -447,7 +446,7 @@ class GUI:
       self.dictAllStyles[self.selectedStyleId].background = None;
       self.update_example_view()
       
-      # TODO: decide what to do with orphaned styles (ones with no properties set)
+      # TODO decide what to do with orphaned styles (ones with no properties set)
       
   def on_foreground_toggled(self, param):
     
@@ -458,7 +457,6 @@ class GUI:
       self.colorbuttonForeground.set_sensitive(False)
       self.dictAllStyles[self.selectedStyleId].foreground = None;
       self.update_example_view()
-  
   
   def on_style_changed(self, data):
         
@@ -491,7 +489,6 @@ class GUI:
     
     self.update_example_view()
     
-
   def on_style_selected(self, selection):
     model, treeiter = selection.get_selected()
 
@@ -556,7 +553,6 @@ class GUI:
     self.checkbuttonBackground.handler_unblock(self.checkbuttonBackgroundHandler)
     self.checkbuttonForeground.handler_unblock(self.checkbuttonForegroundHandler)
   
-
   def on_language_selected(self, combo):
 
     tree_iter = combo.get_active_iter()
@@ -579,6 +575,8 @@ class GUI:
 
         if thisLanguage != None:
           styleIds = thisLanguage.get_style_ids()
+          
+          styleIds.sort() # make the styles list alphabetical
           
           for styleId in styleIds:
             self.liststoreStyles.append([styleId[removeLen:]])
