@@ -3,7 +3,7 @@
 # GtkSoureSchemer
 # https://github.com/jonocodes/GtkSourceSchemer
 #
-# Copyright (C) Jono 2012 <jono@foodnotblogs.com>
+# Copyright (C) Jono Finger 2012 <jono@foodnotblogs.com>
 # 
 # The program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -83,9 +83,11 @@ class GUI:
     GtkSource.View() # hack to get GtkSourceView widget to run from glade file
 
     self.builder = Gtk.Builder()
+
+    uiFile = 'schemer.ui'
     
-    if (os.path.isfile('schemer.ui')):
-      self.builder.add_from_file('schemer.ui')
+    if (os.path.isfile(uiFile)):
+      self.builder.add_from_file(uiFile)
     else:
       print('unable to find UI file')
       sys.exit(1)
@@ -168,20 +170,14 @@ class GUI:
     # watch temp directory to help the sample viewer
     self.schemeManager.append_search_path(tempfile.gettempdir())
     
+    self.origSchemeFile = None
     self.load_scheme('cobalt')
-    self.currentSchemeFile = None
-    
-    for langStyleId in self.guiStyleIds:
-      self.liststoreStyles.append([langStyleId])
     
     self.langMapNameToId = {}
     
-    # TODO perhaps merge the GUI and Default styles into one
+    # make a special case for Defaults which is moved to the top and includes GUI styles
     self.liststoreLanguages.append(['  Default styles'])
-    self.liststoreLanguages.append(['  GUI styles'])
-    
     self.langMapNameToId['  Default styles'] = 'def'
-    self.langMapNameToId['  GUI styles'] = ''
     
     for thisLanguage in languages:
       langName = self.languageManager.get_language(thisLanguage).get_name()
@@ -244,7 +240,7 @@ class GUI:
         
         return False
         
-      self.currentSchemeFile = schemeIdOrFile
+      self.origSchemeFile = schemeIdOrFile
 
     else:
 
@@ -342,13 +338,17 @@ class GUI:
     
     output  += '</style-scheme>\n'
     
-    fp = open(location, 'w')
-    fp.write(output)
-    fp.close()
-    
+    try:
+      fp = open(location, 'w')
+      fp.write(output)
+      fp.close()
+    except:
+      return False
+
+    return True
     
   def on_save_clicked(self, param):
-    if not self.currentSchemeFile:
+    if not self.origSchemeFile:
       
       filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
     
@@ -357,10 +357,10 @@ class GUI:
       
       if filename:
         self.write_scheme(filename, self.entryId.get_text())
-        self.currentSchemeFile = filename
+        self.origSchemeFile = filename
     
     else:
-      self.write_scheme(self.currentSchemeFile, self.entryId.get_text())
+      self.write_scheme(self.origSchemeFile, self.entryId.get_text())
       
       # TODO handle case where there is a permissions issue
   
@@ -373,7 +373,7 @@ class GUI:
       
     if filename:
       self.write_scheme(filename, self.entryId.get_text())
-      self.currentSchemeFile = filename
+      self.origSchemeFile = filename
 
   # launch a file browser dialog for opening a file
   def on_open_clicked(self, param):
@@ -495,12 +495,13 @@ class GUI:
     # handle the special case for when the styles get cleared since the signal activates
     if treeiter == None:
       return
-    
-    if self.currentLanguageId == '':
+
+    self.selectedStyleId = self.currentLanguageId + ':' + model[treeiter][0]
+
+    # handle the special case for GUI styles
+    if self.selectedStyleId not in self.dictAllStyles and self.currentLanguageId == 'def':
       self.selectedStyleId = model[treeiter][0]
-    else:
-      self.selectedStyleId = self.currentLanguageId + ':' + model[treeiter][0]
-    
+
     # block all the toggle handlers so they dont get triggered
     self.togglebuttonItalic.handler_block(self.togglebuttonItalicHandler)
     self.togglebuttonBold.handler_block(self.togglebuttonBoldHandler)
@@ -515,7 +516,7 @@ class GUI:
       
       # handle foreground and background colors
 
-      if thisStyle.foreground != None:
+      if thisStyle.foreground:
         self.colorbuttonForeground.set_color(Gdk.color_parse(thisStyle.foreground))
         self.colorbuttonForeground.set_sensitive(True)
         self.checkbuttonForeground.set_active(True)
@@ -524,7 +525,7 @@ class GUI:
         self.colorbuttonForeground.set_sensitive(False)
         self.checkbuttonForeground.set_active(False)
 
-      if thisStyle.background != None:
+      if thisStyle.background:
         self.colorbuttonBackground.set_color(Gdk.color_parse(thisStyle.background))
         self.colorbuttonBackground.set_sensitive(True)
         self.checkbuttonBackground.set_active(True)
@@ -563,23 +564,22 @@ class GUI:
       
       self.liststoreStyles.clear()
       
-      if self.currentLanguageId == '':
-        for styleId in self.guiStyleIds:
-          self.liststoreStyles.append([styleId])
-          
-      else:
-        # remove the language namespace thing from the style name
-        removeLen = len(self.currentLanguageId) + 1
-      
-        thisLanguage = self.languageManager.get_language(self.currentLanguageId)
+      # remove the language namespace thing from the style name
+      removeLen = len(self.currentLanguageId) + 1
+    
+      thisLanguage = self.languageManager.get_language(self.currentLanguageId)
 
-        if thisLanguage != None:
-          styleIds = thisLanguage.get_style_ids()
-          
-          styleIds.sort() # make the styles list alphabetical
-          
-          for styleId in styleIds:
-            self.liststoreStyles.append([styleId[removeLen:]])
+      if thisLanguage != None:
+        styleIds = thisLanguage.get_style_ids()
+        
+        styleIds.sort() # make the styles list alphabetical
+        
+        if self.currentLanguageId == 'def':
+          for styleId in self.guiStyleIds:
+            self.liststoreStyles.append([styleId])
+
+        for styleId in styleIds:
+          self.liststoreStyles.append([styleId[removeLen:]])
             
       # select the first style in the list
       treeIter = self.treeviewStyles.get_model().get_iter_first()
@@ -627,7 +627,6 @@ def messagedialog(dialog_type, short, long=None, parent=None,
   response = d.run()
   d.destroy()
   return response
-
 
 def runSaveAsDialog(parent, current_name):
   """Displays a save dialog.
