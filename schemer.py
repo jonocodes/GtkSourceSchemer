@@ -41,7 +41,7 @@ class Props:
     self.strikethrough = False
     self.underline = False
     
-  def fromGtkSourceStyle(self, gtkStyle):
+  def from_gtk_source_style(self, gtkStyle):
   
     self.background = gtkStyle.props.background
     self.foreground = gtkStyle.props.foreground
@@ -58,11 +58,6 @@ class Props:
       
     if self.background and self.background[0] != '#':
       self.background = '#' + self.background
-    
-  def toString(self):
-    return ('FG=%s BG=%s Ital=%s Bold=%s Strike=%s Under=%s' %
-      (self.foreground, self.background, self.italic, self.bold,
-      self.strikethrough,self.underline))
     
 
 class GUI:
@@ -237,9 +232,9 @@ class GUI:
       if testFilename != schemeIdOrFile:
         # there must have been some conflict, since it opened the wrong file
 
-        text = '<span weight="bold" size="larger">There was a problem opening the file</span>\n\nYou appear to have schemes with the same IDs in different directories\n'
-        messagedialog(Gtk.MessageType.ERROR, text,
-          buttons=Gtk.ButtonsType.NONE,
+        text = '<span weight="bold" size="larger">There was a problem opening the file</span>' \
+          '\n\nYou appear to have schemes with the same IDs in different directories\n'
+        message_dialog(Gtk.MessageType.ERROR, text, buttons=Gtk.ButtonsType.NONE,
           additional_buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         
         return False
@@ -275,7 +270,7 @@ class GUI:
     for styleElement in styleElements:
       thisStyle = self.currentScheme.get_style(styleElement.attrib['name'])
       styleProps = Props()
-      styleProps.fromGtkSourceStyle(thisStyle)
+      styleProps.from_gtk_source_style(thisStyle)
       self.dictAllStyles[styleElement.attrib['name']] = styleProps;
             
     self.sourceBuffer.set_style_scheme(self.currentScheme);
@@ -354,7 +349,7 @@ class GUI:
   def on_save_clicked(self, param):
     if not self.origSchemeFile:
       
-      filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
+      filename = run_save_as_dialog(self.window, self.entryId.get_text() + '.xml')
     
       if filename and not '.' in os.path.basename(filename):
         filename = filename + '.xml'
@@ -370,7 +365,7 @@ class GUI:
   
   def on_save_as_clicked(self, param):
 
-    filename = runSaveAsDialog(self.window, self.entryId.get_text() + '.xml')
+    filename = run_save_as_dialog(self.window, self.entryId.get_text() + '.xml')
     
     if filename and not '.' in os.path.basename(filename):
       filename = filename + '.xml'
@@ -412,7 +407,7 @@ class GUI:
       
         abspath = os.path.abspath(path)
     
-        messagedialog(Gtk.MessageType.ERROR, ('Could not open file "%s"') % abspath,
+        message_dialog(Gtk.MessageType.ERROR, ('Could not open file "%s"') % abspath,
           ('The file "%s" could not be opened. '
           'Permission denied.') %  abspath, filechooser)
 
@@ -600,7 +595,7 @@ class GUI:
         self.labelSample.set_text(self.defaultLanguageName + ' sample')
 
 
-def messagedialog(dialog_type, short, long=None, parent=None,
+def message_dialog(dialog_type, shortMsg, longMsg=None, parent=None,
                   buttons=Gtk.ButtonsType.OK, additional_buttons=None):
 
   d = Gtk.MessageDialog(parent=parent, flags=Gtk.DialogFlags.MODAL,
@@ -609,16 +604,16 @@ def messagedialog(dialog_type, short, long=None, parent=None,
   if additional_buttons:
     d.add_buttons(*additional_buttons)
 
-  d.set_markup(short)
+  d.set_markup(shortMsg)
 
-  if long:
-    if isinstance(long, Gtk.Widget):
-      widget = long
-    elif isinstance(long, str):
+  if longMsg:
+    if isinstance(longMsg, Gtk.Widget):
+      widget = longMsg
+    elif isinstance(longMsg, str):
       widget = Gtk.Label()
-      widget.set_markup(long)
+      widget.set_markup(longMsg)
     else:
-      raise TypeError('"long" must be a Gtk.Widget or a string')
+      raise TypeError('"longMsg" must be a Gtk.Widget or a string')
     
     expander = Gtk.Expander(label = 'Click here for details')
     expander.set_border_width(6)
@@ -630,7 +625,7 @@ def messagedialog(dialog_type, short, long=None, parent=None,
   d.destroy()
   return response
 
-def runSaveAsDialog(parent, current_name):
+def run_save_as_dialog(parent, current_name):
   """Displays a save dialog.
 
   return the  full path , or None
@@ -670,7 +665,7 @@ def runSaveAsDialog(parent, current_name):
     submsg2 = ('Do you which to replace it with the current project?')
     text = '<span weight="bold" size="larger">%s</span>\n\n%s\n' % \
         (submsg1, submsg2)
-    result = messagedialog(Gtk.MessageType.ERROR, text, parent=parent, buttons=Gtk.ButtonsType.NONE, additional_buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Replace', Gtk.ResponseType.YES))
+    result = message_dialog(Gtk.MessageType.ERROR, text, parent=parent, buttons=Gtk.ButtonsType.NONE, additional_buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, 'Replace', Gtk.ResponseType.YES))
 
     # the user wants to overwrite the file
     if result == Gtk.ResponseType.YES:
