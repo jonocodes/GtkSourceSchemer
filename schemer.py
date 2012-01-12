@@ -67,7 +67,7 @@ class Props:
 
 class GUI:
   
-  def __init__(self):
+  def __init__(self, fromFile):
 
     # constants
 
@@ -171,7 +171,11 @@ class GUI:
     self.schemeManager.append_search_path(tempfile.gettempdir())
     
     self.origSchemeFile = None
-    self.load_scheme('cobalt')
+
+    if fromFile and os.path.isfile(fromFile):
+      self.load_scheme(fromFile)
+    else:
+      self.load_scheme('cobalt')
     
     self.langMapNameToId = {}
     
@@ -222,8 +226,8 @@ class GUI:
       xmlTree = ET.parse(fp)
       fp.close()
 
-      # TODO explicitly parse the 'style-scheme' instead of assuming root is correct
-      thisScheme = self.schemeManager.get_scheme(xmlTree.getroot().attrib['id'])
+      if xmlTree.getroot().tag == 'style-scheme':
+        thisScheme = self.schemeManager.get_scheme(xmlTree.getroot().attrib['id'])
       
       if thisScheme == None:
         return False
@@ -445,8 +449,6 @@ class GUI:
       self.colorbuttonBackground.set_sensitive(False)
       self.dictAllStyles[self.selectedStyleId].background = None;
       self.update_sample_view()
-      
-      # TODO decide what to do with orphaned styles (ones with no properties set)
       
   def on_foreground_toggled(self, param):
     
@@ -678,8 +680,13 @@ def runSaveAsDialog(parent, current_name):
   return path
 
 def main():
-  # TODO: have this handle command line arguments
-  GUI()
+
+  # allow a single argument as the location of a scheme file
+  fromFile = None
+  if len(sys.argv) == 2:
+    fromFile = sys.argv[1]
+
+  GUI(fromFile)
   Gtk.main()
     
 if __name__ == '__main__':
